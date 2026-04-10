@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>schematic-flow-card · demo</title>
+    <link rel="stylesheet" href="./demo.css" />
+  </head>
+  <body data-theme="dark">
+    <header class="topbar">
+      <div class="topbar__title">
+        <strong>schematic-flow-card</strong>
+        <span class="topbar__subtitle">local preview · no Home Assistant required</span>
+      </div>
+      <div class="topbar__actions">
+        <button id="toggle-theme" type="button">Toggle theme</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="card-wrap">
+        <schematic-flow-card id="card"></schematic-flow-card>
+      </section>
+
+      <aside class="panel">
+        <h3>Live state</h3>
+        <p class="panel__hint">
+          These controls mutate the mock <code>hass</code> object and re-assign
+          it to the card — exactly how Home Assistant pushes state updates.
+        </p>
+
+        <div class="control">
+          <label for="inlet-temp">Inlet temperature</label>
+          <input id="inlet-temp" type="range" min="0" max="80" step="1" value="60" />
+          <output for="inlet-temp">60 °C</output>
+        </div>
+
+        <div class="control">
+          <label for="inlet-flow">Inlet flow rate</label>
+          <input id="inlet-flow" type="range" min="0" max="100" step="1" value="50" />
+          <output for="inlet-flow">50 L/min</output>
+        </div>
+
+        <div class="control">
+          <label for="rad-return">Radiator return temp</label>
+          <input id="rad-return" type="range" min="0" max="80" step="1" value="21" />
+          <output for="rad-return">21 °C</output>
+        </div>
+
+        <div class="control">
+          <label for="driveway-temp">Driveway loop temp</label>
+          <input id="driveway-temp" type="range" min="0" max="80" step="1" value="18" />
+          <output for="driveway-temp">18 °C</output>
+        </div>
+
+        <div class="control">
+          <label for="outlet-temp">Outlet temperature</label>
+          <input id="outlet-temp" type="range" min="0" max="80" step="1" value="14" />
+          <output for="outlet-temp">14 °C</output>
+        </div>
+
+        <div class="control control--toggle">
+          <label>
+            <input id="boost" type="checkbox" />
+            Driveway boost (<code>switch.driveway_boost</code>)
+          </label>
+        </div>
+
+        <div class="control control--toggle">
+          <label>
+            <input id="hot-tub" type="checkbox" />
+            Hot tub valve (<code>switch.hot_tub_valve</code>)
+          </label>
+        </div>
+
+        <h3>Event log</h3>
+        <ol id="log" class="log"></ol>
+      </aside>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

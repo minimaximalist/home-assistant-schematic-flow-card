@@ -1,0 +1,214 @@
+/*
+ * Shim Home Assistant theme CSS variables so the card looks authentic
+ * without actually running inside HA. Dark and light variants are the HA
+ * defaults. The card reads all its colors through these variables.
+ */
+
+:root,
+[data-theme='light'] {
+  --primary-color: #03a9f4;
+  --primary-text-color: #212121;
+  --secondary-text-color: #727272;
+  --divider-color: #e0e0e0;
+  --card-background-color: #ffffff;
+  --ha-card-background: #ffffff;
+  --ha-card-border-radius: 12px;
+  --ha-card-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --info-color: #039be5;
+  --error-color: #db4437;
+  --paper-font-body1_-_font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+
+  --app-background: #f4f6f8;
+  --app-text: #212121;
+  --panel-background: #ffffff;
+  --panel-border: #e6e8eb;
+}
+
+[data-theme='dark'] {
+  --primary-color: #7dd3fc;
+  --primary-text-color: #e1e1e1;
+  --secondary-text-color: #9b9b9b;
+  --divider-color: #2a2f36;
+  --card-background-color: #1c1f24;
+  --ha-card-background: #1c1f24;
+  --ha-card-border-radius: 12px;
+  --ha-card-box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  --success-color: #4caf50;
+  --warning-color: #ffb74d;
+  --info-color: #4fc3f7;
+  --error-color: #ef5350;
+
+  --app-background: #111418;
+  --app-text: #e1e1e1;
+  --panel-background: #1c1f24;
+  --panel-border: #2a2f36;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--app-background);
+  color: var(--app-text);
+  font-family: var(--paper-font-body1_-_font-family);
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--panel-border);
+  background: var(--panel-background);
+}
+
+.topbar__title strong {
+  font-size: 0.95rem;
+}
+
+.topbar__subtitle {
+  margin-left: 10px;
+  color: var(--secondary-text-color);
+  font-size: 0.8rem;
+}
+
+.topbar__actions button {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-border);
+  background: transparent;
+  color: var(--app-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.topbar__actions button:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-wrap {
+  min-width: 0;
+}
+
+.panel {
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--panel-background);
+  border: 1px solid var(--panel-border);
+  height: fit-content;
+  position: sticky;
+  top: 24px;
+}
+
+.panel h3 {
+  margin: 0 0 8px 0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--secondary-text-color);
+}
+
+.panel h3:not(:first-child) {
+  margin-top: 20px;
+}
+
+.panel__hint {
+  margin: 0 0 14px 0;
+  font-size: 0.78rem;
+  color: var(--secondary-text-color);
+  line-height: 1.4;
+}
+
+.panel__hint code {
+  background: var(--divider-color);
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+.control {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: 4px;
+  margin-bottom: 12px;
+  font-size: 0.82rem;
+}
+
+.control label {
+  grid-column: 1 / -1;
+  color: var(--secondary-text-color);
+}
+
+.control input[type='range'] {
+  grid-column: 1 / 2;
+  width: 100%;
+}
+
+.control output {
+  grid-column: 2 / 3;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  font-weight: 500;
+  padding-left: 10px;
+}
+
+.control--toggle {
+  grid-template-columns: 1fr;
+}
+
+.control--toggle label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--app-text);
+}
+
+.control--toggle code {
+  color: var(--secondary-text-color);
+  font-size: 0.72rem;
+}
+
+.log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  border-top: 1px solid var(--panel-border);
+  padding-top: 8px;
+}
+
+.log li {
+  padding: 4px 0;
+  color: var(--secondary-text-color);
+  border-bottom: 1px dashed var(--panel-border);
+}
+
+.log li strong {
+  color: var(--primary-color);
+  font-weight: 500;
+}

@@ -1,0 +1,213 @@
+# Vættaborgir hot-water distribution — reference dashboard for schematic-flow-card.
+#
+# Replace the `sensor.*` / `switch.*` entity IDs with the real entities from
+# your own setup. The topology below is the reference diagram described in the
+# card's README: inlet → radiators + domestic hot water → driveway snow-melt,
+# with a bypass boost and a hot-tub branch.
+
+title: Utility room
+views:
+  - title: Hot Water
+    path: hot-water
+    icon: mdi:water-thermometer
+    cards:
+      - type: custom:schematic-flow-card
+        title: Hot Water
+        subtitle: Vættaborgir · Utility room
+        canvas:
+          width: 1160
+          height: 660
+
+        header_chips:
+          - entity: sensor.inlet_temp
+            label: Inlet
+            icon: mdi:thermometer
+            color: { scale: temperature }
+          - entity: sensor.outlet_temp
+            label: Return
+            icon: mdi:thermometer
+            color: { scale: temperature }
+          - entity: sensor.inlet_flow
+            label: Supply
+            icon: mdi:water
+
+        # Defaults merged into every pipe. Locality wins — most pipes want
+        # the same temperature scale and the same flow sensor.
+        defaults:
+          pipes:
+            color: { scale: temperature }
+            animation: { entity: sensor.inlet_flow, min: 0, max: 80 }
+
+        nodes:
+          inlet:
+            x: 40
+            y: 260
+            width: 150
+            height: 140
+            label: Hot Water Inlet
+            kind: source
+            icon: mdi:arrow-right-bold
+            primary_entity: sensor.inlet_temp
+            color: { entity: sensor.inlet_temp, scale: temperature }
+            labels:
+              - sensor.inlet_temp
+              - sensor.inlet_flow
+
+          radiators:
+            x: 440
+            y: 80
+            width: 180
+            height: 120
+            label: House Radiators
+            kind: process
+            icon: mdi:radiator
+            labels:
+              - sensor.radiator_return_temp
+
+          dhw_use:
+            x: 440
+            y: 440
+            width: 180
+            height: 120
+            label: Hot Water Usage
+            kind: process
+            icon: mdi:faucet
+            labels:
+              - sensor.dhw_flow
+
+          hot_tub:
+            x: 740
+            y: 520
+            width: 160
+            height: 140
+            label: Hot Tub
+            kind: process
+            icon: mdi:hot-tub
+            labels:
+              - sensor.hot_tub_temp
+            control:
+              entity: switch.hot_tub_valve
+              label: Valve
+
+          driveway:
+            x: 740
+            y: 320
+            width: 200
+            height: 120
+            label: Driveway Snow-Melt
+            kind: process
+            icon: mdi:snowflake-melt
+            labels:
+              - sensor.driveway_loop_temp
+
+          boost:
+            x: 440
+            y: 240
+            width: 160
+            height: 120
+            label: Bypass Boost
+            kind: bypass
+            icon: mdi:fast-forward
+            control:
+              entity: switch.driveway_boost
+              label: Boost
+
+          outlet:
+            x: 1000
+            y: 260
+            width: 140
+            height: 140
+            label: Hot Water Outlet
+            kind: sink
+            icon: mdi:arrow-right-bold
+            primary_entity: sensor.outlet_temp
+            color: { entity: sensor.outlet_temp, scale: temperature }
+            labels:
+              - sensor.outlet_temp
+              - sensor.outlet_flow
+
+        pipes:
+          # Trunk splits: inlet → radiators (top) and inlet → DHW use (bottom).
+          - id: inlet_to_radiators
+            from: inlet
+            to: radiators
+            waypoints:
+              - [300, 330]
+              - [300, 140]
+            color: { entity: sensor.inlet_temp }
+
+          - id: inlet_to_dhw
+            from: inlet
+            to: dhw_use
+            waypoints:
+              - [300, 330]
+              - [300, 500]
+            color: { entity: sensor.inlet_temp }
+
+          # Radiators return cascades into the driveway loop.
+          - id: radiators_to_driveway
+            from: radiators
+            to: driveway
+            waypoints:
+              - [720, 140]
+              - [720, 320]
+            color: { entity: sensor.radiator_return_temp }
+            labels:
+              - entity: sensor.radiator_return_temp
+                position: above
+
+          # Bypass boost taps the 60°C inlet trunk, gated by a switch.
+          - id: boost_tap
+            from: inlet
+            to: boost
+            waypoints:
+              - [300, 330]
+              - [300, 305]
+            color: { entity: sensor.inlet_temp }
+            gated_by: switch.driveway_boost
+
+          - id: boost_to_driveway
+            from: boost
+            to: driveway
+            waypoints:
+              - [660, 305]
+              - [660, 380]
+            color: { entity: sensor.inlet_temp }
+            gated_by: switch.driveway_boost
+
+          # Hot tub branch off the DHW-use trunk, gated by a valve.
+          - id: dhw_to_hot_tub
+            from: dhw_use
+            to: hot_tub
+            waypoints:
+              - [700, 500]
+              - [700, 580]
+            color: { entity: sensor.inlet_temp }
+            gated_by: switch.hot_tub_valve
+
+          # Returns merging into the outlet trunk.
+          - id: driveway_to_outlet
+            from: driveway
+            to: outlet
+            waypoints:
+              - [970, 380]
+              - [970, 330]
+            color: { entity: sensor.driveway_loop_temp }
+
+          - id: hot_tub_to_outlet
+            from: hot_tub
+            to: outlet
+            waypoints:
+              - [970, 600]
+              - [970, 330]
+            color: { entity: sensor.hot_tub_outlet_temp }
+            gated_by: switch.hot_tub_valve
+
+          - id: dhw_to_outlet
+            from: dhw_use
+            to: outlet
+            waypoints:
+              - [970, 500]
+              - [970, 330]
+            color: { entity: sensor.outlet_temp }
+
