@@ -148,8 +148,8 @@ describe('normalizeGate / resolveGate', () => {
 
   it('expands a string shorthand to default active states', () => {
     const g = normalizeGate('switch.foo');
-    expect(g?.entity).toBe('switch.foo');
-    expect(g?.activeStates).toContain('on');
+    expect(g?.[0].entity).toBe('switch.foo');
+    expect(g?.[0].active_states).toContain('on');
   });
 
   it('open by default when no gate is set', () => {
