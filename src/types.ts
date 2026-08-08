@@ -170,6 +170,7 @@ export interface SchematicFlowCardConfig {
   type: string;
   title?: string;
   subtitle?: string;
+  icon?: string;
   canvas: CanvasConfig;
   header_chips?: EntityDisplayInput[];
   /** Map from node id → node config. */
