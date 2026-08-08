@@ -11,6 +11,7 @@ import type {
   EntityDisplay,
   EntityDisplayInput,
   GateConfig,
+  NormalizedGateConfig,
   HassEntity,
   HomeAssistant,
   NamedScale,
@@ -169,29 +170,35 @@ export function valueToAnimationDuration(
 
 /** Normalize a gate config into { entity, active_states }. */
 export function normalizeGate(
-  gate: GateConfig | undefined,
-): { entity: string; activeStates: string[] } | null {
+  gate: GateConfig | GateConfig[] | undefined,
+): NormalizedGateConfig[] | null {
   if (!gate) return null;
-  if (typeof gate === 'string') {
-    return { entity: gate, activeStates: DEFAULT_ACTIVE_STATES };
+  if (!Array.isArray(gate)) gate = [gate];
+  let normalized: NormalizedGateConfig[] = [];
+  for (var g of gate) {
+    if (typeof g === 'string') {
+      normalized.push({ entity: g, active_states: DEFAULT_ACTIVE_STATES });
+    } else {
+      normalized.push({entity: (g as NormalizedGateConfig).entity, active_states: (g as NormalizedGateConfig).active_states ?? DEFAULT_ACTIVE_STATES});
+    }
   }
-  return {
-    entity: gate.entity,
-    activeStates: gate.active_states ?? DEFAULT_ACTIVE_STATES,
-  };
+  return normalized;
 }
 
 /** True when the gate is open / permissive / absent. */
 export function resolveGate(
   hass: HomeAssistant | null | undefined,
-  gate: GateConfig | undefined,
+  gate: GateConfig | GateConfig[] | undefined,
 ): boolean {
-  const g = normalizeGate(gate);
-  if (!g) return true;
-  const entity = getEntity(hass, g.entity);
-  if (!entity) return false;
-  if (UNAVAILABLE_STATES.has(entity.state)) return false;
-  return g.activeStates.includes(entity.state);
+  const normalized = normalizeGate(gate);
+  if (!normalized) return true;
+  for (var g of normalized) {
+    const entity = getEntity(hass, g.entity);
+    if (!entity) return false;
+    if (UNAVAILABLE_STATES.has(entity.state)) return false;
+    if (!g.active_states?.includes(entity.state)) return false;
+  }
+  return true;
 }
 
 export function expandEntityDisplay(input: EntityDisplayInput): EntityDisplay {

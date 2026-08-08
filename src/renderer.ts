@@ -246,7 +246,7 @@ export function renderPipes(
     const animate = duration != null;
 
     const clickTarget =
-      colorEntity ?? pipe.animation?.entity ?? normalizeGate(pipe.gated_by)?.entity;
+      colorEntity ?? pipe.animation?.entity ?? normalizeGate(pipe.gated_by)?.[0].entity;
 
     const onClick = clickTarget
       ? () => handlers.onMoreInfo(clickTarget)

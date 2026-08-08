@@ -99,6 +99,11 @@ export type GateConfig =
       /** States considered "active". Default: ['on', 'open', 'home', 'active']. */
       active_states?: string[];
     };
+export type NormalizedGateConfig =
+  {
+    entity: string;
+    active_states?: string[];
+  };
 
 export type NodeKind = 'source' | 'sink' | 'process' | 'bypass';
 
@@ -146,7 +151,7 @@ export interface PipeConfig {
   /** Drives dash animation speed. */
   animation?: AnimationBinding;
   /** Pipe is inactive (dimmed, no animation) when gate evaluates inactive. */
-  gated_by?: GateConfig;
+  gated_by?: GateConfig | GateConfig[];
   /** Values rendered along the pipe path. */
   labels?: PipeLabelInput[];
 }
