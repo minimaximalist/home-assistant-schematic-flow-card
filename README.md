@@ -88,6 +88,7 @@ npm run dev       # local preview at http://localhost:5173 (no HA required)
 type: custom:schematic-flow-card
 title: Hot Water
 subtitle: Utility room
+icon: mdi:pipe
 
 canvas:
   width: 1160        # SVG user units — the card scales to fit

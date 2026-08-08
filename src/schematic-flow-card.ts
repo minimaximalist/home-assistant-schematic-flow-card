@@ -192,7 +192,7 @@ export class SchematicFlowCard extends LitElement {
     return html`
       <div class="header">
         <div class="header__icon">
-          <ha-icon icon="mdi:pipe"></ha-icon>
+          <ha-icon icon="${config.icon ? config.icon : "mdi:pipe"}"></ha-icon>
         </div>
         <div class="header__text">
           ${config.title ? html`<div class="header__title">${config.title}</div>` : nothing}
